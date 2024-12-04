@@ -15,6 +15,11 @@ if &compatible
   set nocompatible
 endif
 
+if !exists("*g:SensibleDefaultPred")
+  function g:SensibleDefaultPred(sgout) abort
+    return a:sgout !~# " \\(\\~[\\/]\\|Lua\\)[^\n]*$"
+  endfunction
+endif
 " Check if an option was set from a file in $HOME.  This lets us avoid
 " overriding options in the user's vimrc, but still override options in the
 " system vimrc.
@@ -26,7 +31,7 @@ function! s:MaySet(option) abort
     silent verbose execute 'setglobal all' a:option . '?'
     redir END
   endif
-  return out !~# " \\(\\~[\\/]\\|Lua\\)[^\n]*$"
+  return g:SensibleDefaultPred(out)
 endfunction
 
 if s:MaySet('backspace')
